@@ -1,13 +1,27 @@
 [![Pub](https://img.shields.io/pub/v/country_code_picker.svg)](https://pub.dartlang.org/packages/country_code_picker)
 
 # country_code_picker
+The original package us country code picker for showing a country code selector .
+I add default select from country iso code of the sim 
 
-A flutter package for showing a country code selector.
 
 It supports i18n.
 
+ 
+
 <img src="https://raw.githubusercontent.com/Salvatore-Giordano/CountryCodePicker/master/screenshots/screen1.png" width="240"/>
-<img src="https://raw.githubusercontent.com/Salvatore-Giordano/CountryCodePicker/master/screenshots/screen2.png" width="240"/>
+<img src="https://github.com/tarektaamali/CountryCodePicker/blob/master/screenshots/screen2.png" width="240"/>
+
+## Getting started
+In the pubspec.yaml of your flutter project, add the following dependency:
+
+```dart
+dependencies:
+  ...
+  country_code_picker: 
+    git:
+      url: https://github.com/tarektaamali/CountryCodePicker.git
+```
 
 ## Usage
 
