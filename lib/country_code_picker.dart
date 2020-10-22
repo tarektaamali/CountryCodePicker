@@ -3,9 +3,10 @@ library country_code_picker;
 import 'package:country_code_picker/country_code.dart';
 import 'package:country_code_picker/country_codes.dart';
 import 'package:country_code_picker/selection_dialog.dart';
+import 'package:flt_telephony_info/flt_telephony_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
 export 'country_code.dart';
 
 class CountryCodePicker extends StatefulWidget {
@@ -131,8 +132,55 @@ class CountryCodePickerState extends State<CountryCodePicker> {
   CountryCode selectedItem;
   List<CountryCode> elements = [];
   List<CountryCode> favoriteElements = [];
-
+  String isoCountryCode;
   CountryCodePickerState(this.elements);
+
+
+
+  TelephonyInfo _info;
+
+
+
+  Future<void> getTelephonyInfo() async {
+    TelephonyInfo info;
+    try {
+      info = await FltTelephonyInfo.info;
+    } on PlatformException {}
+
+    if (!mounted) return;
+
+    setState(() {
+      _info = info;
+      isoCountryCode=_info.simCountryIso;
+    });
+     if (isoCountryCode != null) {
+      selectedItem = elements.firstWhere(
+          (e) =>
+              (e.code.toUpperCase() == isoCountryCode.toUpperCase()) ||
+              (e.dialCode == isoCountryCode) ||
+              (e.name.toUpperCase() == isoCountryCode.toUpperCase()),
+          orElse: () => elements[0]);
+    } else {
+      selectedItem = elements[0];
+    }
+
+    favoriteElements = elements
+        .where((e) =>
+            widget.favorite.firstWhere(
+                (f) =>
+                    e.code.toUpperCase() == f.toUpperCase() ||
+                    e.dialCode == f ||
+                    e.name.toUpperCase() == f.toUpperCase(),
+                orElse: () => null) !=
+            null)
+        .toList();
+         if (!mounted) return;
+
+    setState(() {
+
+    });
+        
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,17 +208,17 @@ class CountryCodePickerState extends State<CountryCodePicker> {
                   padding: widget.alignLeft
                       ? const EdgeInsets.only(right: 16.0, left: 8.0)
                       : const EdgeInsets.only(right: 16.0),
-                  child: Image.asset(
+                  child:selectedItem?.flagUri != null ? Image.asset(
                     selectedItem.flagUri,
                     package: 'country_code_picker',
                     width: widget.flagWidth,
-                  ),
+                  ):Container(),
                 ),
               ),
             if (!widget.hideMainText)
               Flexible(
                 fit: widget.alignLeft ? FlexFit.tight : FlexFit.loose,
-                child: Text(
+                child:selectedItem ==null ?Text(""): Text(
                   widget.showOnlyCountryWhenClosed
                       ? selectedItem.toCountryStringOnly()
                       : selectedItem.toString(),
@@ -197,14 +245,14 @@ class CountryCodePickerState extends State<CountryCodePicker> {
   void didUpdateWidget(CountryCodePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.initialSelection != widget.initialSelection) {
-      if (widget.initialSelection != null) {
+    if (oldWidget.initialSelection != isoCountryCode ) {
+      if (isoCountryCode != null) {
         selectedItem = elements.firstWhere(
             (e) =>
                 (e.code.toUpperCase() ==
-                    widget.initialSelection.toUpperCase()) ||
-                (e.dialCode == widget.initialSelection) ||
-                (e.name.toUpperCase() == widget.initialSelection.toUpperCase()),
+                    isoCountryCode.toUpperCase()) ||
+                (e.dialCode == isoCountryCode) ||
+                (e.name.toUpperCase() == isoCountryCode.toUpperCase()),
             orElse: () => elements[0]);
       } else {
         selectedItem = elements[0];
@@ -216,28 +264,10 @@ class CountryCodePickerState extends State<CountryCodePicker> {
   @override
   void initState() {
     super.initState();
+    getTelephonyInfo();
 
-    if (widget.initialSelection != null) {
-      selectedItem = elements.firstWhere(
-          (e) =>
-              (e.code.toUpperCase() == widget.initialSelection.toUpperCase()) ||
-              (e.dialCode == widget.initialSelection) ||
-              (e.name.toUpperCase() == widget.initialSelection.toUpperCase()),
-          orElse: () => elements[0]);
-    } else {
-      selectedItem = elements[0];
-    }
 
-    favoriteElements = elements
-        .where((e) =>
-            widget.favorite.firstWhere(
-                (f) =>
-                    e.code.toUpperCase() == f.toUpperCase() ||
-                    e.dialCode == f ||
-                    e.name.toUpperCase() == f.toUpperCase(),
-                orElse: () => null) !=
-            null)
-        .toList();
+   
   }
 
   void showCountryCodePickerDialog() {

@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   modal_bottom_sheet: ^0.2.2
+  flt_telephony_info: any
   flutter:
     sdk: flutter
 

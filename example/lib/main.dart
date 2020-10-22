@@ -2,7 +2,9 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:country_code_picker/country_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'dart:async';
+import 'package:flutter/services.dart';
+import 'package:flt_telephony_info/flt_telephony_info.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -11,6 +13,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -36,18 +44,6 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              CountryCodePicker(
-                onChanged: print,
-                // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                initialSelection: 'IT',
-                favorite: ['+39', 'FR'],
-                countryFilter: ['IT', 'FR'],
-                showFlagDialog: false,
-                comparator: (a, b) => b.name.compareTo(a.name),
-                //Get the country information relevant to the initial selection
-                onInit: (code) =>
-                    print("on init ${code.name} ${code.dialCode} ${code.name}"),
-              ),
               SizedBox(
                 width: 400,
                 height: 60,
@@ -58,7 +54,7 @@ class _MyAppState extends State<MyApp> {
                     hideMainText: true,
                     showFlagMain: true,
                     showFlag: false,
-                    initialSelection: 'TF',
+                    initialSelection: "",
                     hideSearch: true,
                     showCountryOnly: true,
                     showOnlyCountryWhenClosed: true,
@@ -73,9 +69,9 @@ class _MyAppState extends State<MyApp> {
                   padding: const EdgeInsets.all(8.0),
                   child: CountryCodePicker(
                     onChanged: (e) => print(e.toLongString()),
-                    initialSelection: 'TF',
+                     initialSelection: "",
                     showCountryOnly: true,
-                    showOnlyCountryWhenClosed: true,
+                    showOnlyCountryWhenClosed: false,
                     favorite: ['+39', 'FR'],
                   ),
                 ),
@@ -88,7 +84,7 @@ class _MyAppState extends State<MyApp> {
                   child: CountryCodePicker(
                     enabled: false,
                     onChanged: (c) => c.name,
-                    initialSelection: 'TF',
+                    initialSelection: "",
                     showCountryOnly: true,
                     showOnlyCountryWhenClosed: true,
                     favorite: ['+39', 'FR'],
